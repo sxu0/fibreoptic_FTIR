@@ -5,6 +5,10 @@ def load_data(filename):
     wavelength, attenuation = np.loadtxt(filename, delimiter=',', skiprows=2, unpack=True)
     return wavelength, attenuation
 
+def load_spectra(filename):
+    channel, reading = np.loadtxt(filename, delimiter=',', unpack=True)
+    return channel, reading
+
 def wavelen2wavenum(wavelength):
     return 1 / (wavelength / 1e7)
 
@@ -35,5 +39,21 @@ if __name__ == "__main__":
     plt.xlabel('wavenumber [cm$^{-1}$]')
     plt.ylabel('transmission [%]')
     plt.title('fibre transmission')
+
+    spectra_files = ['tb202311202054s0d00x.0000.dpt',
+                     'tb202311202054s0d00x.0000-2.dpt',
+                     'tb202311221836s0d00x.0004.dpt']
+
+    chnls, ampls = [], []
+    for i in range(len(spectra_files)):
+        chnl, ampl = load_spectra(spectra_files[i])
+        chnls.append(chnl)
+        ampls.append(ampl)
+
+    plt.figure()
+    for i in range(len(spectra_files)):
+        plt.plot(chnls[i], ampls[i], linewidth=0.5, label=spectra_files[i])
+    # not sure what the units are yet
+    plt.legend()
 
     plt.show()
