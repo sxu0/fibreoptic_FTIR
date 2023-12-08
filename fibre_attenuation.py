@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 def load_data(filename):
     wavelength, attenuation = np.loadtxt(filename, delimiter=',', skiprows=2, unpack=True)
     return wavelength, attenuation
 
-def load_spectra(filename):
+def load_spectrum(filename):
     channel, reading = np.loadtxt(filename, delimiter=',', unpack=True)
     return channel, reading
 
@@ -40,19 +41,35 @@ if __name__ == "__main__":
     plt.ylabel('transmission [%]')
     plt.title('fibre transmission')
 
-    spectra_files = ['tb202311202054s0d00x.0000.dpt',
-                     'tb202311202054s0d00x.0000-2.dpt',
-                     'tb202311221836s0d00x.0004.dpt']
+    data_folder = Path.cwd() / 'data'
+    spectra_files, ifg_files = [], []
+    for file in data_folder.iterdir():
+        if 'ifg' in file.name and 'transformedspectrum' not in file.name.lower():
+            ifg_files.append(file)
+        else:
+            spectra_files.append(file)
 
-    chnls, ampls = [], []
+    spectra_chnls, spectra_ampls = [], []
     for i in range(len(spectra_files)):
-        chnl, ampl = load_spectra(spectra_files[i])
-        chnls.append(chnl)
-        ampls.append(ampl)
+        chnl, ampl = load_spectrum(spectra_files[i])
+        spectra_chnls.append(chnl)
+        spectra_ampls.append(ampl)
 
     plt.figure()
     for i in range(len(spectra_files)):
-        plt.plot(chnls[i], ampls[i], linewidth=0.5, label=spectra_files[i])
+        plt.plot(spectra_chnls[i], spectra_ampls[i], linewidth=0.5, label=spectra_files[i].name)
+    # not sure what the units are yet
+    plt.legend()
+
+    ifg_chnls, ifg_ampls = [], []
+    for i in range(len(ifg_files)):
+        chnl, ampl = load_spectrum(ifg_files[i])
+        ifg_chnls.append(chnl)
+        ifg_ampls.append(ampl)
+
+    plt.figure()
+    for i in range(len(ifg_files)):
+        plt.plot(ifg_chnls[i], ifg_ampls[i], linewidth=0.5, label=ifg_files[i].name)
     # not sure what the units are yet
     plt.legend()
 
