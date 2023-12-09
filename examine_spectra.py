@@ -1,13 +1,21 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from pathlib import Path
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def load_spectrum(filename):
     channel, reading = np.loadtxt(filename, delimiter=',', unpack=True)
     return channel, reading
 
-def scale_by_max(spectrum, peak):
-    return spectrum / max(spectrum) * peak
+def envelope(spectrum, max_window, mean_window):
+    spectrum = pd.Series(spectrum)
+    envelope = spectrum.rolling(max_window, center=True).max()
+    envelope = envelope.rolling(mean_window, center=True).mean()
+    envelope = np.array(envelope)
+    return envelope
+
+def scale_by_envelope(spectrum, envel, peak):
+    return spectrum / np.nanmax(envel) * peak
 
 if __name__ == "__main__":
     data_folder = Path.cwd() / 'data'
@@ -34,15 +42,18 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(8, 4))
     for i in range(len(spectra_files)):
-        plt.plot(spectra_chnls[i], scale_by_max(spectra_ampls[i], 1),
+        nvlp = envelope(spectra_ampls[i], 250, 1000)
+        plt.plot(spectra_chnls[i], scale_by_envelope(spectra_ampls[i], nvlp, 1),
                  linewidth=0.5, label=spectra_files[i].name)
+        plt.plot(spectra_chnls[i], scale_by_envelope(nvlp, nvlp, 1), '--k',
+                 linewidth=1.0, label='')
     # not sure what the units are yet
     plt.title('transformed spectra')
     plt.legend(loc='upper right')  # bbox_to_anchor=(1, 1)
 
     plt.figure(figsize=(8, 4))
     for i in range(len(spectra_files_co)):
-        plt.plot(spectra_chnls_co[i], scale_by_max(spectra_ampls_co[i], 1),
+        plt.plot(spectra_chnls_co[i], spectra_ampls_co[i],
                  linewidth=0.5, label=spectra_files_co[i].name)
     # not sure what the units are yet
     plt.title('transformed spectra, CO channel')
