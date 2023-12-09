@@ -3,6 +3,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+'''
+to-dos:
+* overlay TA & TB spectra
+* cross-correlate TA & TB spectra
+* try to estimate noise & channelling
+* try to explain deviations in envelope shape
+'''
+
 def load_spectrum(filename):
     channel, reading = np.loadtxt(filename, delimiter=',', unpack=True)
     return channel, reading
