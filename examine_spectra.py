@@ -6,6 +6,9 @@ def load_spectrum(filename):
     channel, reading = np.loadtxt(filename, delimiter=',', unpack=True)
     return channel, reading
 
+def scale_by_max(spectrum, peak):
+    return spectrum / max(spectrum) * peak
+
 if __name__ == "__main__":
     data_folder = Path.cwd() / 'data'
     spectra_files, ifg_files = [], []
@@ -31,7 +34,7 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(8, 4))
     for i in range(len(spectra_files)):
-        plt.plot(spectra_chnls[i], spectra_ampls[i],
+        plt.plot(spectra_chnls[i], scale_by_max(spectra_ampls[i], 1),
                  linewidth=0.5, label=spectra_files[i].name)
     # not sure what the units are yet
     plt.title('transformed spectra')
@@ -39,7 +42,7 @@ if __name__ == "__main__":
 
     plt.figure(figsize=(8, 4))
     for i in range(len(spectra_files_co)):
-        plt.plot(spectra_chnls_co[i], spectra_ampls_co[i],
+        plt.plot(spectra_chnls_co[i], scale_by_max(spectra_ampls_co[i], 1),
                  linewidth=0.5, label=spectra_files_co[i].name)
     # not sure what the units are yet
     plt.title('transformed spectra, CO channel')
