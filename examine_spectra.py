@@ -25,7 +25,7 @@ def envelope(spectrum, max_window, mean_window):
 def scale_by_envelope(spectrum, envel, peak):
     return spectrum / np.nanmax(envel) * peak
 
-if __name__ == "__main__":
+def look(scale=False):
     data_folder = Path.cwd() / 'data'
     spectra_files, ifg_files = [], []
     for file in data_folder.iterdir():
@@ -51,10 +51,16 @@ if __name__ == "__main__":
     plt.figure(figsize=(8, 4))
     for i in range(len(spectra_files)):
         nvlp = envelope(spectra_ampls[i], 250, 1000)
-        plt.plot(spectra_chnls[i], scale_by_envelope(spectra_ampls[i], nvlp, 1),
-                 linewidth=0.5, label=spectra_files[i].name)
-        plt.plot(spectra_chnls[i], scale_by_envelope(nvlp, nvlp, 1), '--k',
-                 linewidth=1.0, label='')
+        if scale:
+            plt.plot(spectra_chnls[i], spectra_ampls[i],
+                    linewidth=0.5, label=spectra_files[i].name)
+            plt.plot(spectra_chnls[i], nvlp, '--k',
+                    linewidth=1.0, label='')
+        else:
+            plt.plot(spectra_chnls[i], scale_by_envelope(spectra_ampls[i], nvlp, 1),
+                    linewidth=0.5, label=spectra_files[i].name)
+            plt.plot(spectra_chnls[i], scale_by_envelope(nvlp, nvlp, 1), '--k',
+                    linewidth=1.0, label='')
     # not sure what the units are yet
     plt.title('transformed spectra')
     plt.legend(loc='upper right')  # bbox_to_anchor=(1, 1)
@@ -81,3 +87,6 @@ if __name__ == "__main__":
     plt.legend(loc='upper right')
 
     plt.show()
+
+if __name__ == "__main__":
+    look(scale=False)
