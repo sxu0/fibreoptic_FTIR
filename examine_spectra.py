@@ -88,5 +88,31 @@ def look(scale=False):
 
     plt.show()
 
+def overlay():
+    data_folder = Path.cwd() / 'data'
+    spectra_files, ifg_files = [], []
+    for file in data_folder.iterdir():
+        if 'ifg' in file.name and 'transformedspectr' not in file.name.lower():
+            ifg_files.append(file)
+        else:
+            spectra_files.append(file)
+    colours = {'ta': ['gold', 'orange'], 'tb': ['cornflowerblue', 'royalblue']}
+    plt.figure()
+    for spectrum in spectra_files:
+        chnl, ampl = load_spectrum(spectrum)
+        if spectrum.name[:10] == 'ta20231130' or spectrum.name[:10] == 'tb20231130':
+            if spectrum.name[-6:-4] == 'c1':
+                plt.plot(chnl, ampl, label=spectrum.name[:2] + ', main chnl',
+                         color=colours[spectrum.name[:2]][0])
+            elif spectrum.name[-6:-4] == 'c2':
+                plt.plot(chnl, ampl, label=spectrum.name[:2] + ', CO chnl',
+                         color=colours[spectrum.name[:2]][1])
+    plt.legend(fontsize=8)
+    plt.xlabel('wavenumber [cm$^{-1}$]')
+    plt.ylabel('signal [arbitrary units]')
+    plt.title('20231130 TA (rooftop) vs TB (test) Fourier transformed spectra')
+    plt.show()
+
 if __name__ == "__main__":
-    look(scale=False)
+    # look(scale=False)
+    overlay()
