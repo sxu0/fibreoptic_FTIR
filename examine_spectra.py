@@ -107,7 +107,8 @@ def overlay():
             elif spectrum.name[-6:-4] == 'c2':
                 plt.plot(chnl, ampl, label=spectrum.name[:2] + ', CO chnl',
                          color=colours[spectrum.name[:2]][1])
-    plt.legend(fontsize=8)
+    plt.xlim(3800, 12200)
+    plt.legend()
     plt.xlabel('wavenumber [cm$^{-1}$]')
     plt.ylabel('signal [arbitrary units]')
     plt.title('20231130 TA (rooftop) vs TB (test) Fourier transformed spectra')
