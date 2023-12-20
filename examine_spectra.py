@@ -29,7 +29,7 @@ def look(scale=False):
     data_folder = Path.cwd() / 'data'
     spectra_files, ifg_files = [], []
     for file in data_folder.iterdir():
-        if 'ifg' in file.name and 'transformedspectrum' not in file.name.lower():
+        if 'ifg' in file.name and 'transformedspectr' not in file.name.lower():
             ifg_files.append(file)
         else:
             spectra_files.append(file)
@@ -52,16 +52,17 @@ def look(scale=False):
     for i in range(len(spectra_files)):
         nvlp = envelope(spectra_ampls[i], 250, 1000)
         if scale:
-            plt.plot(spectra_chnls[i], spectra_ampls[i],
-                    linewidth=0.5, label=spectra_files[i].name)
-            plt.plot(spectra_chnls[i], nvlp, '--k',
-                    linewidth=1.0, label='')
-        else:
             plt.plot(spectra_chnls[i], scale_by_envelope(spectra_ampls[i], nvlp, 1),
                     linewidth=0.5, label=spectra_files[i].name)
             plt.plot(spectra_chnls[i], scale_by_envelope(nvlp, nvlp, 1), '--k',
                     linewidth=1.0, label='')
-    # not sure what the units are yet
+        else:
+            plt.plot(spectra_chnls[i], spectra_ampls[i],
+                    linewidth=0.5, label=spectra_files[i].name)
+            plt.plot(spectra_chnls[i], nvlp, '--k',
+                    linewidth=1.0, label='')
+    plt.xlabel('wavenumber [cm$^{-1}$]')
+    plt.ylabel('signal [arbitrary units]')
     plt.title('transformed spectra')
     plt.legend(loc='upper right')  # bbox_to_anchor=(1, 1)
 
@@ -69,7 +70,8 @@ def look(scale=False):
     for i in range(len(spectra_files_co)):
         plt.plot(spectra_chnls_co[i], spectra_ampls_co[i],
                  linewidth=0.5, label=spectra_files_co[i].name)
-    # not sure what the units are yet
+    plt.xlabel('wavenumber [cm$^{-1}$]')
+    plt.ylabel('signal [arbitrary units]')
     plt.title('transformed spectra, CO channel')
     plt.legend(loc='upper right')
 
