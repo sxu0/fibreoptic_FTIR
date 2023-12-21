@@ -116,6 +116,18 @@ def overlay():
     plt.title('20231130 TA (rooftop) vs TB (test) Fourier transformed spectra')
     plt.show()
 
+def ils():
+    chnl, spectrum = load_spectrum(
+        Path.cwd() / 'data' / 'tb202311221836s0d00x.0004.dpt')
+    plt.figure()
+    plt.plot(chnl, spectrum)
+    plt.xlim(4800, 12200)
+    plt.xlabel('wavenumber [cm$^{-1}$]')
+    plt.ylabel('signal [arbitrary units]')
+    plt.title('20231122 lamp spectrum')
+    plt.show()
+
 if __name__ == "__main__":
     # look(scale=False)
-    overlay()
+    # overlay()
+    ils()
